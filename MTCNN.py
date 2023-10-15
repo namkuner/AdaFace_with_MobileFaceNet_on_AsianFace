@@ -20,28 +20,25 @@ def create_mtcnn_net(image, mini_face, device, p_model_path=None, r_model_path=N
 
         bboxes = detect_pnet(pnet, image, mini_face, device)
 
-
     if r_model_path is not None:
         rnet = RNet().to(device)
         rnet.load_state_dict(torch.load(r_model_path, map_location=lambda storage, loc: storage))
         rnet.eval()
 
         bboxes = detect_rnet(rnet, image, bboxes, device)
-
     if o_model_path is not None:
         onet = ONet().to(device)
         onet.load_state_dict(torch.load(o_model_path, map_location=lambda storage, loc: storage))
         onet.eval()
 
         bboxes, landmarks = detect_onet(onet, image, bboxes, device)
-
     return bboxes, landmarks
 
 def detect_pnet(pnet, image, min_face_size, device):
 
     # start = time.time()
 
-    thresholds = 0.7 # face detection thresholds
+    thresholds = 0.8 # face detection thresholds
     nms_thresholds = 0.7
 
     # BUILD AN IMAGE PYRAMID
@@ -126,7 +123,7 @@ def detect_rnet(rnet, image, bboxes, device):
     # start = time.time()
 
     size = 24
-    thresholds = 0.8  # face detection thresholds
+    thresholds = 0.7  # face detection thresholds
     nms_thresholds = 0.7
     height, width, channel = image.shape
 
@@ -171,7 +168,7 @@ def detect_onet(onet, image, bboxes, device):
     # start = time.time()
 
     size = 48
-    thresholds = 0.98  # face detection thresholds
+    thresholds = 0.9  # face detection thresholds
     nms_thresholds = 0.7
     height, width, channel = image.shape
 
